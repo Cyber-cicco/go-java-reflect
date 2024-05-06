@@ -3,12 +3,14 @@ package reflect
 import sitter "github.com/smacker/go-tree-sitter"
 
 type Document struct {
-    Root *sitter.Node
+    root *sitter.Node
 }
 
 func (d *Document) GetMethods() []*Method {
     return []*Method{}
 }
+
+
 
 //Search an annotation of a query that goes like this :
 //
@@ -28,7 +30,11 @@ func (d *Document) ImportSelector(query string) *Type {
     return &Type{}
 }
 
-//Finds the first inside a class
+func (d *Document) ConstructorSelector(query string) *Constructor {
+
+}
+
+//Finds the first method inside a class
 //
 //query looks as follows:
 //<name>:<return_type?>[type1?,...,typen?]
@@ -37,6 +43,17 @@ func (d *Document) ImportSelector(query string) *Type {
 //a nil Tree Sitter Node and false if it wasn't found
 func (d *Document) MethodSelector(query string) *Method {
     return &Method{}
+}
+
+//Finds the first field a class
+//
+//query looks as follows:
+//<name>:<return_type>
+//
+//Returns a Type and true if there is match, and a Type with
+//a nil Tree Sitter Node and false if it wasn't found
+func (d *Document) FieldSelector(query string) *Field {
+    return &Field{}
 }
 
 //Returns all imports object of a given java document
