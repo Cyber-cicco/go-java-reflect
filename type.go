@@ -1,13 +1,20 @@
 package reflect
 
+import sitter "github.com/smacker/go-tree-sitter"
+
 type Type struct {
     Identifier string
-    OptClass *Class
+    Scope *sitter.Node
 }
 
 func (t *Type) GetDeclaredName() string {
-    if t.OptClass != nil {
-        return t.OptClass.GetDeclaredName()
-    }
     return t.Identifier
+}
+
+func GetType(node *sitter.Node) *Type {
+    return &Type{}
+}
+
+func getClassFromPackageName(node sitter.Node) string {
+    return ""
 }
