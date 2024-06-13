@@ -13,6 +13,7 @@ type Root interface {
 
 type RootElement interface {
     GetDocument() *Document
+    GetDeclaredName() string
 }
 
 //Expression that gets back a value of a certain type
