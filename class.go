@@ -12,8 +12,12 @@ type Class struct {
     document *Document
 }
 
-func (d *Class) GetMethods() []*Method {
+func (c *Class) GetMethods() []*Method {
     return []*Method{}
+}
+
+func (c *Class) GetDocument() *Document {
+    return c.document
 }
 
 

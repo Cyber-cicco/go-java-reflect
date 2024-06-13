@@ -38,7 +38,7 @@ func (d *Document) GetImports() []*Import {
 	return imps
 }
 
-func (d *Document) GetMainClass() (*Class, error) {
+func (d *Document) GetMainClass() (RootElement, error) {
 
 	match := querier.GetFirstMatch(d.root, func(node *sitter.Node) bool {
 		return node.Type() == "class_declaration"

@@ -11,6 +11,10 @@ type Root interface {
     GetRoot() *sitter.Node
 }
 
+type RootElement interface {
+    GetDocument() *Document
+}
+
 //Expression that gets back a value of a certain type
 //
 //Implementers:

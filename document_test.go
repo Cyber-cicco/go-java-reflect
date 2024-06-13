@@ -86,10 +86,31 @@ func TestGetMainClass(t *testing.T) {
 	}
 
 	expected := "Additif"
-	actual := main.GetDeclaredName()
 
-	if actual != expected {
-        t.Fatalf("Error : expected %s, got %s", actual, expected)
-	}
+    switch c := main.(type) {
+    case *Class:
+        actual := c.GetDeclaredName()
 
+        if actual != expected {
+            t.Fatalf("Error : expected %s, got %s", actual, expected)
+        }
+    }
+
+}
+
+func TestGetImports(t *testing.T) {
+	document := testInit(t)
+    imps := document.GetImports()
+
+    expectedLen := 4
+
+    if len(imps) != expectedLen {
+        t.Fatalf("Error : expected %d, got %d", expectedLen, len(imps))
+    }
+
+    exp := "jakarta.persistence.Entity"
+
+    if imps[0].ToString() != exp {
+        t.Fatalf("Error : expected %s, got %s", exp, imps[0].ToString())
+    }
 }

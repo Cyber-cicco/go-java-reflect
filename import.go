@@ -3,6 +3,7 @@ package reflect
 import (
 	"errors"
 
+	"github.com/Cyber-cicco/tree-sitter-query-builder/querier"
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
@@ -12,6 +13,7 @@ import (
 type Import struct {
     root *sitter.Node
     document *Document
+    scope *sitter.Node
 }
 
 // Create an import by checking if the root node is indeed an import
@@ -24,5 +26,15 @@ func NewImport(root *sitter.Node, d *Document) (*Import, error) {
         root: root,
         document: d,
     }, nil
+}
+
+func (i *Import) getMainScope() *sitter.Node {
+    return querier.GetFirstMatch(i.root, func(n *sitter.Node) bool {
+        return n.Type() == "scoped_identifier"
+    })
+}
+
+func (i *Import) ToString() string {
+    return i.getMainScope().Content(i.document.content)
 }
 
