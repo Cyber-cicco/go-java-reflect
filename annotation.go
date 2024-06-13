@@ -6,3 +6,7 @@ type Annotation struct {
     root *sitter.Node
     parent *Annotated
 }
+
+func (a *Annotation) GetDefaultValue() (*Literal, bool) {
+    return &Literal{}, false
+}

@@ -1,9 +1,13 @@
 package reflect
 
-import sitter "github.com/smacker/go-tree-sitter"
-
 type Type struct {
-    root *sitter.Node
-    Document *Document
+    Identifier string
+    OptClass *Class
 }
 
+func (t *Type) GetDeclaredName() string {
+    if t.OptClass != nil {
+        return t.OptClass.GetDeclaredName()
+    }
+    return t.Identifier
+}
