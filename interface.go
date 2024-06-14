@@ -5,24 +5,30 @@ import (
 )
 
 type Interface struct {
-    root *sitter.Node
-    document *Document
+	root     *sitter.Node
+	document *Document
+	parent   TypeElement
 }
 
-func NewInterface(node *sitter.Node, d *Document) (*Interface, error) {
+func NewInterface(node *sitter.Node, d *Document, parent TypeElement) (*Interface, error) {
 
-    root, err := d.NewRootType(node)
+	root, err := d.NewRootType(node)
 
 	return &Interface{
 		root:     root,
 		document: d,
+		parent:   parent,
 	}, err
 }
 
 func (i *Interface) GetDeclaredName() string {
-    return i.root.ChildByFieldName("name").Content(i.document.content)
+	return i.root.ChildByFieldName("name").Content(i.document.content)
 }
 
 func (i *Interface) GetDocument() *Document {
-    return i.document
+	return i.document
+}
+
+func (i *Interface) GetParent() TypeElement {
+	return i.parent
 }

@@ -14,11 +14,6 @@ type Document struct {
 	content []byte
 }
 
-type RootType struct {
-	root     *sitter.Node
-	document *Document
-}
-
 func NewDocument(root *sitter.Node, path string, content []byte) *Document {
 	return &Document{
 		root:    root,
@@ -60,7 +55,7 @@ func (d *Document) GetImports() []*Import {
 	return imps
 }
 
-func (d *Document) GetMainClass() (RootElement, error) {
+func (d *Document) GetMainClass() (TypeElement, error) {
 
 	match := querier.GetFirstMatch(d.root, func(node *sitter.Node) bool {
 		return node.Type() == "class_declaration" ||
@@ -73,15 +68,15 @@ func (d *Document) GetMainClass() (RootElement, error) {
 
 	switch match.Type() {
 	case "class_declaration":
-		return NewClass(match, d)
+		return NewClass(match, d, nil)
 	case "record_declaration":
-		return NewRecord(match, d)
+		return NewRecord(match, d, nil)
 	case "annotation_type_declaration":
-		return NewAnnotation(match, d)
+		return NewAnnotation(match, d,nil)
 	case "enum_declaration":
-		return NewEnum(match, d)
+		return NewEnum(match, d, nil)
 	case "interface_declaration":
-		return NewInterface(match, d)
+		return NewInterface(match, d, nil)
 	}
 	panic("Switch statement should be exhaustive")
 

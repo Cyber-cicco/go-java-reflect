@@ -11,9 +11,10 @@ type Root interface {
     GetRoot() *sitter.Node
 }
 
-type RootElement interface {
+type TypeElement interface {
     GetDocument() *Document
     GetDeclaredName() string
+    GetParent() TypeElement
 }
 
 //Expression that gets back a value of a certain type

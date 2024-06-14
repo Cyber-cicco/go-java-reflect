@@ -4,29 +4,41 @@ import (
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
+// Represents a base class in a java project.
 type Class struct {
     root *sitter.Node
     document *Document
+    parent TypeElement
 }
 
-func (c *Class) GetMethods() []*Method {
-    return []*Method{}
-}
-
-func (c *Class) GetDocument() *Document {
-    return c.document
-}
-
-
-func NewClass(node *sitter.Node, d *Document) (*Class, error) {
+// Creates a new class from sitter node
+func NewClass(node *sitter.Node, d *Document, parent *Class) (*Class, error) {
 
     root, err := d.NewRootType(node)
 
 	return &Class{
 		root:     root,
 		document: d,
+        parent: parent,
 	}, err
 }
+
+func (c *Class) GetDocument() *Document {
+    return c.document
+}
+
+func (c *Class) GetParent() TypeElement {
+    return c.parent
+}
+
+func (c *Class) GetDeclaredName() string {
+    return c.root.ChildByFieldName("name").Content(c.document.content)
+}
+
+func (c *Class) GetMethods() []*Method {
+    return []*Method{}
+}
+
 
 //Search an annotation of a query that goes like this :
 //
@@ -36,10 +48,6 @@ func NewClass(node *sitter.Node, d *Document) (*Class, error) {
 //an nil Tree Sitter Node and false if it wasn't found
 func (c *Class) AnnotationSelector(query string) (Annotation, bool) {
     return Annotation{}, false
-}
-
-func (c *Class) GetDeclaredName() string {
-    return c.root.ChildByFieldName("name").Content(c.document.content)
 }
 
 func (c *Class) GetName() string {
