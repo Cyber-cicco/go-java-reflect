@@ -10,6 +10,7 @@ import (
 )
 
 func testInit(t *testing.T) *Document {
+    p := Project{}
 	path := config.JAVA_DIR + "entites/Additif.java"
 	file, err := os.ReadFile(path)
 
@@ -24,7 +25,7 @@ func testInit(t *testing.T) *Document {
 		t.Fatalf("Got unexpected error %s", err)
 	}
 
-	document, err := NewDocument(root.RootNode(), absPath, file)
+	document, err := p.NewDocument(root.RootNode(), absPath, file)
 
 	if document == nil {
 		t.Fatalf("Wtf %p", document)
@@ -35,11 +36,7 @@ func testInit(t *testing.T) *Document {
 func TestPackage(t *testing.T) {
 	document := testInit(t)
 	exp := "fr.diginamic.entites"
-	p, err := document.GetPackage()
-
-	if err != nil {
-		t.Fatalf("Got unexpected error %s", err)
-	}
+	p := document.GetPackage()
 
 	if p.ToString() != exp {
 		t.Fatalf("Expected %s, got %s", exp, p.ToString())
@@ -62,11 +59,7 @@ public class Additif extends BaseEntity{
 		content: errorCase,
 	}
 
-	p, err = document.GetPackage()
-
-	if err == nil {
-		t.Fatalf("Expected an error, got package %s", p)
-	}
+	p = document.GetPackage()
 
 	exp = "Class doesn't have a package declaration"
 
@@ -79,11 +72,7 @@ public class Additif extends BaseEntity{
 func TestGetMainClass(t *testing.T) {
 
 	document := testInit(t)
-	main, err := document.GetMainClass()
-
-	if err != nil {
-		t.Fatalf("Got unexpected error %s", err)
-	}
+	main := document.GetMainClass()
 
 	expected := "Additif"
 
