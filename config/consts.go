@@ -3,11 +3,17 @@ package config
 
 const RESOURCE_FOLDER = "./resources/"
 const JAVA_DIR = RESOURCE_FOLDER + "example-app/src/main/java/fr/diginamic/" 
+
+const (
+    DIAG_PCK = iota
+    DIAG_CLASS
+    DIAG_IMPS
+)
 var PRIMITIVES = []string {
 }
 
 //map of java classes in the java.lang package associated with their description
-var javaLang map[string]string
+var javaLang map[string]string = map[string]string{}
 
 func init() {
     javaLang["AbstractMethodError"] = "Thrown when an application tries to call an abstract method."

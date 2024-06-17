@@ -1,6 +1,10 @@
 package reflect
 
-import sitter "github.com/smacker/go-tree-sitter"
+import (
+	"errors"
+
+	sitter "github.com/smacker/go-tree-sitter"
+)
 
 type AnnotationDeclaration struct {
 	root     *sitter.Node
@@ -9,13 +13,16 @@ type AnnotationDeclaration struct {
 }
 
 func NewAnnotation(node *sitter.Node, d *Document, parent *Class) (*AnnotationDeclaration, error) {
-	root, err := d.NewRootType(node)
+
+	if node.Type() != "annotation_type_declaration" {
+        return nil, errors.New("Unexpected type for enum declaration : " + node.Type())
+    }
 
 	return &AnnotationDeclaration{
-		root:     root,
+		root:     node,
 		document: d,
         parent: parent,
-	}, err
+	}, nil
 }
 
 func (a *AnnotationDeclaration) GetDocument() *Document {

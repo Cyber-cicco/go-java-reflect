@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-type null struct{}
-
 type Scope struct {
 	identifier string
 	classes    []ClassProvider
@@ -19,6 +17,7 @@ type Project struct {
 }
 
 func (p *Project) GetScope(identifier string, classProvider ClassProvider) (*Scope, error) {
+    //mut
 	var curr *Scope
 
 	if identifier == "" {
@@ -29,19 +28,22 @@ func (p *Project) GetScope(identifier string, classProvider ClassProvider) (*Sco
 	ids := strings.Split(identifier, ".")
 
 	for len(ids) > 0 {
-		curr, ok := p.scopes[ids[0]]
+        var ok bool
+		curr, ok = p.scopes[ids[0]]
 
 		if !ok {
 			//mutation
-			p.addIdsToScope(ids, curr)
+			curr = p.addIdsToScope(ids, curr)
 			break
 		}
 
 		//mutation
-		ids = ids[:1]
+		ids = ids[1:]
 	}
 
-	curr.classes = append(curr.classes, classProvider)
+    if classProvider != nil {
+        curr.classes = append(curr.classes, classProvider)
+    }
 
 	return curr, nil
 }
@@ -51,7 +53,7 @@ func (p *Project) GetScope(identifier string, classProvider ClassProvider) (*Sco
 // Takes a list of scope identifiers, and a current node
 // For every identifier, creates a scope, and adds the following
 // idenfier as it's child.
-func (p *Project) addIdsToScope(ids []string, curr *Scope) {
+func (p *Project) addIdsToScope(ids []string, curr *Scope) *Scope {
 
 	for len(ids) > 0 {
 		newScope := newScope(curr, ids[0])
@@ -65,12 +67,32 @@ func (p *Project) addIdsToScope(ids []string, curr *Scope) {
 		//mutation
 		curr = newScope
 		//mutation
-		ids = ids[:1]
+		ids = ids[1:]
 	}
+    return curr
+}
+
+func NewProject() *Project {
+    scopes := make(map[string]*Scope)
+    return &Project{
+        scopes: scopes,
+    }
 }
 
 func (s *Scope) ToString() string {
 	return s.identifier
+}
+
+func (s *Scope) GetFullScope() string {
+    buffer := []string{}
+    //mut
+    curr := s
+    for curr != nil {
+        buffer = append([]string{curr.identifier}, buffer...)
+        //mutation
+        curr = curr.parent
+    }
+    return strings.Join(buffer, ".")
 }
 
 func newScope(parent *Scope, identifier string) *Scope {

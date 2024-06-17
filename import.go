@@ -26,17 +26,25 @@ func NewImport(root *sitter.Node, d *Document) (*Import, error) {
     var err error
     var className string
 
+
 	if root.Type() != "import_declaration" {
 		return nil, errors.New("import node needs to be of type 'import_declaration', '" + root.Type() + "' was given")
 	}
 
+    error := querier.QuerySelector(root, "ERROR")
+
+    if error != nil {
+        return nil, errors.New("ERROR was found in import and shouldn't be used as an adress")
+    }
+
 	scopeNode := querier.GetFirstMatch(root, func(n *sitter.Node) bool {
 		return n.Type() == "scoped_identifier"
 	})
+    scopeIdentifier := scopeNode.ChildByFieldName("scope").Content(d.content)
 
     if scopeNode != nil {
         className = scopeNode.ChildByFieldName("name").Content(d.content)
-        scope, err = GetScope(scopeNode.ChildByFieldName("scope"), d)
+        scope, err = d.project.GetScope(scopeIdentifier, d)
 
         if err != nil {
             return nil, err
@@ -45,16 +53,18 @@ func NewImport(root *sitter.Node, d *Document) (*Import, error) {
         className = querier.QuerySelector(root, "identifier").Content(d.content)
     }
 
-	return &Import{
+
+    imp := &Import{
 		root:     root,
 		document: d,
 		scope:    scope,
         className: className,
-	}, nil
+	}
+    return imp, nil
 }
 
 func (i *Import) ToString() string {
-	return i.scope.ToString() + "." + i.className
+	return i.scope.GetFullScope() + "." + i.className
 }
 
 func (i *Import) GetClassName() string {

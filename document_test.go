@@ -2,6 +2,7 @@ package reflect
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -10,7 +11,7 @@ import (
 )
 
 func testInit(t *testing.T) *Document {
-    p := Project{}
+    p := NewProject()
 	path := config.JAVA_DIR + "entites/Additif.java"
 	file, err := os.ReadFile(path)
 
@@ -25,7 +26,12 @@ func testInit(t *testing.T) *Document {
 		t.Fatalf("Got unexpected error %s", err)
 	}
 
-	document, err := p.NewDocument(root.RootNode(), absPath, file)
+	document, ok := p.NewDocument(root.RootNode(), absPath, file)
+    fmt.Printf("document.diagnostics: %v\n", document.diagnostics)
+
+    if !ok {
+        t.Fatalf("Got unexpected errors %v", document.diagnostics)
+    }
 
 	if document == nil {
 		t.Fatalf("Wtf %p", document)
@@ -38,8 +44,8 @@ func TestPackage(t *testing.T) {
 	exp := "fr.diginamic.entites"
 	p := document.GetPackage()
 
-	if p.ToString() != exp {
-		t.Fatalf("Expected %s, got %s", exp, p.ToString())
+	if p.GetFullScope() != exp {
+		t.Fatalf("Expected %s, got %s", exp, p.GetFullScope())
 	}
 
 	errorCase := []byte(`
@@ -53,18 +59,18 @@ public class Additif extends BaseEntity{
 
 }
 `)
-	root, err := config.JavaParser.ParseCtx(context.TODO(), nil, errorCase)
-	document = &Document{
-		root:    root.RootNode(),
-		content: errorCase,
-	}
+	root, _ := config.JavaParser.ParseCtx(context.TODO(), nil, errorCase)
+    project := NewProject()
+    document, ok := project.NewDocument(root.RootNode(), "", errorCase)
 
-	p = document.GetPackage()
+    if ok {
+        t.Fatalf("Expected error, got valid document %v", document)
+    }
 
-	exp = "Class doesn't have a package declaration"
+    diag, ok := document.diagnostics[config.DIAG_IMPS]
 
-	if err.Error() != exp {
-		t.Fatalf("Error was expected to be %s, got %s", exp, err)
+	if ok {
+		t.Fatalf("Error was expected to be %s, got %v", diag, document.diagnostics)
 	}
 
 }
@@ -99,6 +105,7 @@ func TestGetImports(t *testing.T) {
 
 	exp := "jakarta.persistence.Entity"
 
+    fmt.Printf("imps: %v\n", imps)
 	if imps[0].ToString() != exp {
 		t.Fatalf("Error : expected %s, got %s", exp, imps[0].ToString())
 	}
