@@ -8,12 +8,12 @@ type Constructor struct {
 }
 
 
-func (c *Constructor) GetArguments() []*Argument {
-    return []*Argument{}
+func (c *Constructor) GetArguments() []*Parameter {
+    return []*Parameter{}
 }
-func (c *Constructor) ArgumentSelector() *Argument {
-    return &Argument{}
+func (c *Constructor) ArgumentSelector() *Parameter {
+    return &Parameter{}
 }
-func (c *Constructor) ArgumentSelectorAll() []*Argument {
-    return []*Argument{}
+func (c *Constructor) ArgumentSelectorAll() []*Parameter {
+    return []*Parameter{}
 }

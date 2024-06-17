@@ -1,14 +1,12 @@
 package reflect
 
-import sitter "github.com/smacker/go-tree-sitter"
-
 type Annotated interface {
     AnnotationSelector(query string) *Annotation
     GetAnnotations() []*Annotation
 }
 
-type Root interface {
-    GetRoot() *sitter.Node
+type ClassProvider interface {
+    GetMainClass() TypeElement
 }
 
 type TypeElement interface {

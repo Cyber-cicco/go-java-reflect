@@ -24,7 +24,7 @@ func testInit(t *testing.T) *Document {
 		t.Fatalf("Got unexpected error %s", err)
 	}
 
-	document := NewDocument(root.RootNode(), absPath, file)
+	document, err := NewDocument(root.RootNode(), absPath, file)
 
 	if document == nil {
 		t.Fatalf("Wtf %p", document)

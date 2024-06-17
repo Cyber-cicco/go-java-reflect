@@ -36,7 +36,7 @@ func NewImport(root *sitter.Node, d *Document) (*Import, error) {
 
     if scopeNode != nil {
         className = scopeNode.ChildByFieldName("name").Content(d.content)
-        scope, err = NewScope(scopeNode.ChildByFieldName("scope"), d)
+        scope, err = GetScope(scopeNode.ChildByFieldName("scope"), d)
 
         if err != nil {
             return nil, err

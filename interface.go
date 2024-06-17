@@ -1,6 +1,8 @@
 package reflect
 
 import (
+	"errors"
+
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
@@ -12,13 +14,15 @@ type Interface struct {
 
 func NewInterface(node *sitter.Node, d *Document, parent TypeElement) (*Interface, error) {
 
-	root, err := d.NewRootType(node)
+    if node.Type() != "interface_declaration" {
+        return nil, errors.New("Unexpected node type for interface declaration : " + node.Type())
+    }
 
 	return &Interface{
-		root:     root,
+		root:     node,
 		document: d,
 		parent:   parent,
-	}, err
+	}, nil
 }
 
 func (i *Interface) GetDeclaredName() string {

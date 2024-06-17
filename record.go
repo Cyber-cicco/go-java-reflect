@@ -1,6 +1,8 @@
 package reflect
 
 import (
+	"errors"
+
 	sitter "github.com/smacker/go-tree-sitter"
 )
 
@@ -11,13 +13,16 @@ type Record struct {
 }
 
 func NewRecord(node *sitter.Node, d *Document, parent TypeElement) (*Record, error) {
-    root, err := d.NewRootType(node)
+
+    if node.Type() != "record_declaration" {
+        return nil, errors.New("Unexpected node for record declaration : " + node.Type())
+    }
 
 	return &Record{
-		root:     root,
+		root:     node,
 		document: d,
         parent: parent,
-	}, err
+	}, nil
 }
 
 func (r *Record) GetDocument() *Document {

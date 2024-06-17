@@ -1,6 +1,10 @@
 package reflect
 
-import sitter "github.com/smacker/go-tree-sitter"
+import (
+	"errors"
+
+	sitter "github.com/smacker/go-tree-sitter"
+)
 
 type Enum struct {
 	root     *sitter.Node
@@ -10,13 +14,15 @@ type Enum struct {
 
 func NewEnum(node *sitter.Node, d *Document, parent TypeElement) (*Enum, error) {
 
-	n, err := d.NewRootType(node)
+	if node.Type() != "enum_declaration" {
+        return nil, errors.New("Unexpected type for enum declaration : " + node.Type())
+    }
 
 	return &Enum{
-		root:     n,
+		root:     node,
 		document: d,
 		parent:   parent,
-	}, err
+	}, nil
 }
 
 func (e *Enum) GetDeclaredName() string {

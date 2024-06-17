@@ -10,13 +10,14 @@ import (
 type Document struct {
 	root      *sitter.Node
 	imports   []*Import
+    project   Project
 	path      string
 	mainClass TypeElement
 	_package  *Scope
 	content   []byte
 }
 
-func NewDocument(root *sitter.Node, path string, content []byte) (*Document, error) {
+func (p *Project) NewDocument(root *sitter.Node, path string, content []byte) (*Document, error) {
 
 	var impNodes = []*sitter.Node{}
 	var mainClass TypeElement
@@ -82,10 +83,10 @@ func NewDocument(root *sitter.Node, path string, content []byte) (*Document, err
 	})
 
 	if identifier == nil {
-		return nil, errors.New("found package declaration without scoped identifier")
+		return nil, errors.New("found package declaration without identifier")
 	}
 
-	scope, err := NewScope(identifier, document)
+	scope, err := p.GetScope(identifier.Content(document.content), document)
 	document._package = scope
 
 	return document, err
@@ -100,8 +101,8 @@ func (d *Document) GetMainClass() TypeElement {
 	return d.mainClass
 }
 
-func (d *Document) GetPackage() (*Scope, error) {
-
+func (d *Document) GetPackage() *Scope {
+    return d._package
 }
 
 func (d *Document) GetImportByIdentifier(identifier string) (*Import, error) {
