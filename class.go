@@ -58,8 +58,8 @@ func (c *Class) GetName() string {
 //
 //Returns a Type and true if there is match, and a Type with
 //a nil Tree Sitter Node and false if it wasn't found
-func (d *Document) ImportSelector(query string) *Type {
-    return &Type{}
+func (d *Document) ImportSelector(query string)  {
+    return 
 }
 
 func (d *Class) ConstructorSelector(query string) *Constructor {

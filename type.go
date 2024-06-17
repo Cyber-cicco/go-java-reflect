@@ -11,7 +11,7 @@ type Type struct {
 	identifier string
 	document   *Document
 	scope      *sitter.Node
-	literal    TypeProvider
+	parent    TypeProvider
 	primitive  bool
 }
 
@@ -19,7 +19,9 @@ func (t *Type) GetDeclaredName() string {
 	return t.identifier
 }
 
-func NewType(node *sitter.Node, literal TypeProvider, document *Document) (*Type, error) {
+// Creates a type from a type argument.
+// Finds it's scope from the import or from the prefix of the type.
+func NewType(node *sitter.Node, parent TypeProvider, document *Document) (*Type, error) {
 
 	var identifier string
 	var scope *sitter.Node = nil
@@ -41,11 +43,17 @@ func NewType(node *sitter.Node, literal TypeProvider, document *Document) (*Type
         })
 	} else {
 		identifier = node.Content(document.content)
+        if node.Type() != "integral_type" &&
+		node.Type() != "floating_point_type" &&
+		node.Type() != "boolean_type" {
+            document.ImportSelector("")
+        }
 	}
 
 	return &Type{
 		identifier: identifier,
 		document:   document,
+        parent: parent,
 	}, nil
 }
 

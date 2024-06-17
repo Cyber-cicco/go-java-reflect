@@ -37,10 +37,10 @@ type TypeProvider interface {
 // - Method
 // - Constructor
 //
-type Argumented interface {
-    GetArguments() []*Argument
-    ArgumentSelector() *Argument
-    ArgumentSelectorAll() []*Argument
+type Parameterized interface {
+    GetArguments() []*Parameter
+    ArgumentSelector() *Parameter
+    ArgumentSelectorAll() []*Parameter
 }
 
 //Expression that has constructors

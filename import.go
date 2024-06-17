@@ -15,36 +15,46 @@ type Import struct {
 	document  *Document
 	static    bool
 	className string
-	scope     *sitter.Node
+	scope     *Scope
 }
 
 // Create an import by checking if the root node is indeed an import
 // declaration
 func NewImport(root *sitter.Node, d *Document) (*Import, error) {
+
+    var scope *Scope = nil
+    var err error
+    var className string
+
 	if root.Type() != "import_declaration" {
 		return nil, errors.New("import node needs to be of type 'import_declaration', '" + root.Type() + "' was given")
 	}
 
-	scope := querier.GetFirstMatch(root, func(n *sitter.Node) bool {
+	scopeNode := querier.GetFirstMatch(root, func(n *sitter.Node) bool {
 		return n.Type() == "scoped_identifier"
 	})
-    className := scope.ChildByFieldName("name").Content(d.content)
+
+    if scopeNode != nil {
+        className = scopeNode.ChildByFieldName("name").Content(d.content)
+        scope, err = NewScope(scopeNode.ChildByFieldName("scope"), d)
+
+        if err != nil {
+            return nil, err
+        }
+    } else {
+        className = querier.QuerySelector(root, "identifier").Content(d.content)
+    }
 
 	return &Import{
 		root:     root,
 		document: d,
 		scope:    scope,
+        className: className,
 	}, nil
 }
 
-func (i *Import) getMainScope() *sitter.Node {
-	return querier.GetFirstMatch(i.root, func(n *sitter.Node) bool {
-		return n.Type() == "scoped_identifier"
-	})
-}
-
 func (i *Import) ToString() string {
-	return i.scope.Content(i.document.content)
+	return i.scope.ToString() + "." + i.className
 }
 
 func (i *Import) GetClassName() string {

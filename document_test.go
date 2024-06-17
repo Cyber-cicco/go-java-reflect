@@ -41,8 +41,8 @@ func TestPackage(t *testing.T) {
 		t.Fatalf("Got unexpected error %s", err)
 	}
 
-	if p != exp {
-		t.Fatalf("Expected %s, got %s", exp, p)
+	if p.ToString() != exp {
+		t.Fatalf("Expected %s, got %s", exp, p.ToString())
 	}
 
 	errorCase := []byte(`
@@ -87,30 +87,30 @@ func TestGetMainClass(t *testing.T) {
 
 	expected := "Additif"
 
-    switch c := main.(type) {
-    case *Class:
-        actual := c.GetDeclaredName()
+	switch c := main.(type) {
+	case *Class:
+		actual := c.GetDeclaredName()
 
-        if actual != expected {
-            t.Fatalf("Error : expected %s, got %s", actual, expected)
-        }
-    }
+		if actual != expected {
+			t.Fatalf("Error : expected %s, got %s", actual, expected)
+		}
+	}
 
 }
 
 func TestGetImports(t *testing.T) {
 	document := testInit(t)
-    imps := document.GetImports()
+	imps := document.GetImports()
 
-    expectedLen := 4
+	expectedLen := 4
 
-    if len(imps) != expectedLen {
-        t.Fatalf("Error : expected %d, got %d", expectedLen, len(imps))
-    }
+	if len(imps) != expectedLen {
+		t.Fatalf("Error : expected %d, got %d", expectedLen, len(imps))
+	}
 
-    exp := "jakarta.persistence.Entity"
+	exp := "jakarta.persistence.Entity"
 
-    if imps[0].ToString() != exp {
-        t.Fatalf("Error : expected %s, got %s", exp, imps[0].ToString())
-    }
+	if imps[0].ToString() != exp {
+		t.Fatalf("Error : expected %s, got %s", exp, imps[0].ToString())
+	}
 }
